@@ -1,0 +1,50 @@
+import requests
+import json
+
+# Replace YOUR_API_KEY with your OpenWeatherMap API key
+API_KEY = "YOUR_API_KEY"
+
+def get_weather_data(city, units="metric"):
+  """Gets the weather data for a given city.
+
+  Args:
+    city: The name of the city.
+    units: The unit system to use. Valid values are `metric`, `imperial`, and `standard`.
+
+  Returns:
+    A dictionary containing the weather data.
+  """
+
+  url = "https://api.openweathermap.org/data/2.5/weather?q=bengaluru&units=metric&appid=5bc87d86a21377bab667ca26739ed2e7".format(city=city, units=units, api_key=API_KEY)
+
+  response = requests.get(url)
+  data = json.loads(response.content)
+
+  return data
+
+def display_weather_data(data):
+  """Displays the weather data.
+
+  Args:
+    data: A dictionary containing the weather data.
+  """
+
+  # Check if the `name` key exists in the data dictionary
+  if "name" in data:
+    print("City:", data["name"])
+  else:
+    print("City name not found")
+
+  # Get the current temperature from the data dictionary, or return a default value if the key does not exist
+  current_temperature = data.get("main", {}).get("temp", 0)
+  print("Current temperature:", current_temperature, "degrees Celsius")
+
+  # Get the weather conditions from the data dictionary, or return a default value if the key does not exist
+  weather_conditions = data.get("weather", [{}])[0].get("description", "Unknown")
+  print("Weather conditions:", weather_conditions)
+
+if __name__ == "__main__":
+  city = input("Enter the city name: ")
+
+  weather_data = get_weather_data(city)
+  display_weather_data(weather_data)
